@@ -49,12 +49,12 @@ pbl['alltext'] = pbl.Title +pbl.space+ pbl.Platform +pbl.space+ pbl.Publisher +p
 #clean dataset
 pbl['alltext'] = pbl['alltext'].str.lower()
 #pass
-texts = pbl['alltext']
-texts = texts.tolist()
-shortword = re.compile(r'\W*\b\w{1,3}\b')
-for i in range(len(texts)):
-    texts[i] = shortword.sub('',texts[i])
-pbl['alltext'] = texts
+#texts = pbl['alltext']
+#texts = texts.tolist()
+#shortword = re.compile(r'\W*\b\w{1,3}\b')
+#for i in range(len(texts)):
+#    texts[i] = shortword.sub('',texts[i])
+#pbl['alltext'] = texts
 
 vectorizer = CountVectorizer()
 vectorizer.fit_transform(pbl['alltext'])

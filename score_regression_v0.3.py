@@ -17,14 +17,14 @@ from tensorflow.keras import layers
 
 def build_model():
   model = keras.Sequential([
-    layers.Dense(64, activation='softmax', input_shape=[len(X[0])]),
-    layers.Dense(64, activation='relu'),
+    layers.Dense(256, activation='softmax', input_shape=[len(X[0])]),
+    layers.Dense(128, activation='elu'),
     layers.Dense(64, activation='relu'),
     layers.Dense(2)
   ])
 
-  optimizer = tf.keras.optimizers.RMSprop(0.001)
-
+  #optimizer = tf.keras.optimizers.RMSprop(0.01,centered=True)
+  optimizer = tf.keras.optimizers.Adam(0.001)
   model.compile(loss='mse',
                 optimizer=optimizer,
                 metrics=['mae', 'mse'])
@@ -39,30 +39,37 @@ def differ(row,vocab,numset):
 #        for i in range(len(vocab_platform)):
 #            if row.Platform == vocab_platform[i]:
 #                return numset_platform[i]        
-
+def lowcase_clean(row):
+    testing = row.alltext.lower()
+    row.alltext = row.alltext.lower()
+    return row.alltext.lower()
+#    if num == 2:
+#        for i in range(len(vocab_platform)):
+#            if row.Platform == vocab_platform[i]:
+#                return numset_platform[i]        
 
 # load dataset
 pbl = pd.read_table('complete_base.csv')
 pbl.dropna(subset = ['UserReviews', 'CriticReviews', 'MetaScore', 'UserScore','Publisher', 'Developer'], inplace=True)
-pbl = pbl.drop(pbl[pbl.CriticReviews < 30].index)
-pbl = pbl.drop(pbl[pbl.UserReviews < 50].index)
+pbl = pbl.drop(pbl[pbl.CriticReviews < 5].index)
+pbl = pbl.drop(pbl[pbl.UserReviews < 10].index)
 
-#clean dataset
 
-#pass
 
 
 list_space = []
 for _ in range(len(pbl['Title'])):
     list_space.append(' ')
 pbl['space'] = list_space
-pbl['all text'] = pbl.Title +pbl.space+ pbl.Platform +pbl.space+ pbl.Publisher +pbl.space+ pbl.Developer +pbl.space#+ pbl.Genres
-
+pbl['alltext'] = pbl.Title +pbl.space+ pbl.Platform +pbl.space+ pbl.Publisher +pbl.space+ pbl.Developer +pbl.space#+ pbl.Genres
+#clean dataset
+pbl['alltext'] = pbl['alltext'].str.lower()
+#pass
 
 vectorizer = CountVectorizer()
-vectorizer.fit_transform(pbl['all text'])
+vectorizer.fit_transform(pbl['alltext'])
 title_voc = vectorizer.vocabulary_
-vector_title = vectorizer.transform(pbl['all text'])
+vector_title = vectorizer.transform(pbl['alltext'])
 vector_title = vector_title.toarray()
 
 
@@ -147,15 +154,11 @@ print('Enter title, platform, publisher, developer, genre:')
 test = []
 #title = input()
 title = 'God of War PS4 Sony Sony'
-
+title = title.lower()
 title = [title]
 vectorizer.vocabulary_ = title_voc
 vector = vectorizer.transform(title)
 vector = vector.toarray()
-
-
-
-
 
 test = [[vector]]
 test = np.asarray(test).astype(np.float32)

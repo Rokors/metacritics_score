@@ -17,7 +17,7 @@ from tensorflow.keras import layers
 
 def build_model():
   model = keras.Sequential([
-    layers.Dense(256, activation='softmax', input_shape=[len(X[0])]),
+    layers.Dense(512, activation='softmax', input_shape=[len(X[0])]),
     layers.Dense(128, activation='elu'),
     layers.Dense(64, activation='relu'),
     layers.Dense(2)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jul 17 15:14:00 2020
-
 @author: barkov
 """
 
@@ -11,6 +10,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -18,9 +18,10 @@ import re
 
 def build_model():
   model = keras.Sequential([
-    layers.Dense(16, activation='softmax', input_shape=[len(X[0])]),
-    layers.Dense(8, activation='relu'),
-    layers.Dense(4, activation='relu'),
+    layers.Dense(64, activation='softmax', input_shape=[len(X[0])]),
+    #layers.Dense(8, activation='relu'),
+    layers.Dropout(0.5),
+    layers.Dense(32, activation='relu'),
     layers.Dense(2)
   ])
 
@@ -36,7 +37,7 @@ def build_model():
 pbl = pd.read_table('complete_base.csv')
 pbl.dropna(subset = ['UserReviews', 'CriticReviews', 'MetaScore', 'UserScore','Publisher', 'Developer'], inplace=True)
 pbl = pbl.drop(pbl[pbl.CriticReviews < 5].index)
-pbl = pbl.drop(pbl[pbl.UserReviews < 50].index)
+pbl = pbl.drop(pbl[pbl.UserReviews < 15].index)
 
 
 
@@ -150,5 +151,3 @@ vector = vector.toarray()
 test = np.asarray(vector).astype(np.float32)
 test_predictions = model.predict(test).flatten()
 print('Prediction is {} '.format(test_predictions))
-
-

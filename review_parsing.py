@@ -19,7 +19,7 @@ def review_text(body):
     #return u" ".join(t.strip() for t in text)
 
 #number of links to parse for each category
-LINKNUM = 800
+LINKNUM = 1000
 # get list of urls for chosen game params
 
 # load dataset
@@ -34,9 +34,9 @@ pbl['space'] = list_space
 pbl['reviewlink'] = pbl.permalink + pbl.space
 
 
-# first part, games >90 MetaScore
+# first part, games >87 MetaScore
 
-pbl_1 = pbl.drop(pbl[pbl.MetaScore < 90].index)
+pbl_1 = pbl.drop(pbl[pbl.MetaScore < 87].index)
 review_links = pbl_1.reviewlink.tolist()
 #review_links = review_links[:LINKNUM]
 
@@ -46,10 +46,14 @@ headers={'User-Agent':user_agent,}
 list_text = []
 for link in review_links:
     request=urllib.request.Request(link,None,headers) #The assembled request
-    response = urllib.request.urlopen(request)
-    data = response.read() # The data u need
+    try:
+        response = urllib.request.urlopen(request)
+    except Exception:
+        pass
+    else:
+        data = response.read() # The data u need
     #html = urllib.request.urlopen(link,headers=hdr).read()
-    list_text.append(review_text(data))
+        list_text.append(review_text(data))
     
 best_text = []
 for sublist in list_text:
@@ -61,8 +65,8 @@ with open('best_text.csv', 'w', newline='') as myfile:
      wr.writerow(best_text) 
 # second part, games <90 && >75 MetaScore
 
-pbl_1 = pbl.drop(pbl[pbl.MetaScore > 90].index)
-pbl_1 = pbl.drop(pbl[pbl.MetaScore < 75].index)
+pbl_1 = pbl.drop(pbl[pbl.MetaScore > 87].index)
+pbl_1 = pbl.drop(pbl[pbl.MetaScore < 70].index)
 
 
 review_links = pbl_1.reviewlink.tolist()
@@ -73,10 +77,14 @@ review_links = review_links[:LINKNUM]
 list_text = []
 for link in review_links:
     request=urllib.request.Request(link,None,headers) #The assembled request
-    response = urllib.request.urlopen(request)
-    data = response.read() # The data u need
+    try:
+        response = urllib.request.urlopen(request)
+    except Exception:
+        pass
+    else:
+        data = response.read() # The data u need
     #html = urllib.request.urlopen(link,headers=hdr).read()
-    list_text.append(review_text(data))
+        list_text.append(review_text(data))
     
 average_text = []
 for sublist in list_text:
@@ -88,7 +96,7 @@ with open('average_text.csv', 'w', newline='') as myfile:
      wr.writerow(average_text)
 # third part, games <75 MetaScore
 
-pbl_1 = pbl.drop(pbl[pbl.MetaScore > 75].index)
+pbl_1 = pbl.drop(pbl[pbl.MetaScore > 65].index)
 
 
 review_links = pbl_1.reviewlink.tolist()
@@ -98,10 +106,14 @@ review_links = review_links[:LINKNUM]
 list_text = []
 for link in review_links:
     request=urllib.request.Request(link,None,headers) #The assembled request
-    response = urllib.request.urlopen(request)
-    data = response.read() # The data u need
+    try:
+        response = urllib.request.urlopen(request)
+    except Exception:
+        pass
+    else:
+        data = response.read() # The data u need
     #html = urllib.request.urlopen(link,headers=hdr).read()
-    list_text.append(review_text(data))
+        list_text.append(review_text(data))
     
 bad_text = []
 for sublist in list_text:
